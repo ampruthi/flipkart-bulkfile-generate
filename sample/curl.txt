@@ -1,0 +1,5 @@
+curl -X POST "http://localhost:8080/api/v1/products/upload" ^
+  -F "product=@sample/product.json;type=application/json" ^
+  -F "images=@C:\path\to\image1.jpg" ^
+  -F "images=@C:\path\to\image2.jpg" ^
+  -F "images=@C:\path\to\image3.jpg"

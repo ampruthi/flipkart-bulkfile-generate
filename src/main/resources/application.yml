@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/flipkart_uploader}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 50MB
+
+app:
+  excel:
+    template: classpath:templates/C_earring_1eeefffca65b48c4_1809-1643FK_REQXQFJK8HQTF.xls
+    output-dir: ./output
+
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
+    model: ${OPENAI_MODEL:gpt-5-mini}
+
+  google-drive:
+    credentials: ${GOOGLE_DRIVE_CREDENTIALS:file:./config/google/flipkart-509014-621e17dd27b9.json}
+    tokens-directory: ${GOOGLE_DRIVE_TOKENS:./data/google-tokens}
+    folder-id: ${GOOGLE_DRIVE_FOLDER_ID:1f9RICn5S4QiVafUkhw2y8TAf1aTwVeVR}
+
+dropbox:
+  app-key: ${DROPBOX_APP_KEY:dq7e541o7judajy}
+  app-secret: ${DROPBOX_APP_SECRET:d2hc1u8rksscw6b}
+  refresh-token: ${DROPBOX_REFRESH_TOKEN}
+  folder: ${DROPBOX_FOLDER:/Flipkart-naarinest-media}
+
+server:
+  port: 8080

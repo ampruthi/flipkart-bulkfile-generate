@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "flipkart-509014",
+  "private_key_id": "621e17dd27b9c96ff176d810a4f72345f1afdaa8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDBlitLNciY7j5E\ntamyeHMR7sjh6C8KaS6BLBwhBjsMWr2u34cxbeC6JnCTsSRWXjLzaJ78e0jXf0b/\nMyUyzWRbgWgTIq7Zn8UMYbTq+Ao4mdA6QYjGOj8QZgGZJeh6SxcqtqyckED5ugLO\nqOPIYwDSzqNdbaGD412znFkonZC9NeMAj4I3rNeLdHacJ7wXK66fY4tAYGTOYG97\nQle1gHszWtXmT/zyo5fuWhGKc4vZSRX9Eod37yZqy3++jbnC4GOg1hfDuc5/S+NI\nY/1SW6sh/HFVFpBDOxH55S5MtMz1rn26TRed1ryrGtTQ+wq50vaNUiMKU7gr/XGT\nn99Daq7nAgMBAAECggEAMeuLloV0CRvGquk9rWwqIEG3Q6ogF0swVtcNGecFaxYr\nO+Egd7qh7N7kwPE5MZxw/xvHg8w26HtFz6FcwlD8xCwGroiPFkeBBMRdZwo3eIkR\njTRBFP0ILi5f0yJXZNHgU39v25/HYZ56AtjChHYjTDlFH16Z++yxyRNUWojnPiMn\n8KnPFnBQioNySPBTHz3ilueU383V8DUsB/DOvsrM6aXlfvfWQbLH6EhhZFCsFa8K\nPz5nLq86fmb3vXrN2vc5S+CNIqZ4ZSioHm3BjIOF4qKmFW++g8Z64XPuEYX9bji9\nms5Sc+ZGQw7mlaHpxnsPnxmGpn5xdcrPeOUBis6YAQKBgQDzzRAInqywLEFWRPK+\nY6hHTDbelfbJoH7KbEckVIGgegydRO8irggROvsykzzSaQT1gWDq5mAhnwTTOyB7\nhORjP+gJlatgNVctejAhpP+61CpWWbESpIQhI4yoDKt0UhO2jt5VW3/vEIkF3Pi2\nk/EZRJSkmJpQ/bg8a4UwUaGBAQKBgQDLReQupFceTQW7JYr4QSlWKl0Hrwl7N2hl\nqajBWfGHV8VbhKM+GZJaPZNwb5QHkPA1WkxD948AOhdpAedYc5d50Wu1D8Q4bbBn\naeUW10W5zKGPf6P2JOkCh/VITasz21DrWYtHSO68AxKZ/OiWENgjS6GYYI9p51+6\nR/fd5+hH5wKBgQC2u4919oBWt4TtRVZwD0AU2HIT2XEU5N/Dlu6ns1NJVdFYm09l\nve08BOo8mREwYBigbq2Wwr9w08CJFjsdeZi5LzAa5vyBatmBs6CZxxMKFHX7LNTE\ntVx3fi6x0nU8BTzTSzgn4CH+rHUXWO1t42sFVlrXF64qYFETsD8u3TBhAQKBgHAX\nM1PRBcVMvctMUYzCCfRc2f4BtJ3AmQ3ud4NfgMOcT9U+l/IHkd+3MtV+gceGUh9p\nksKsAawjXINoLFVnMHFZXSZz8kUXn333M//bZ7SkNbb2sMhr5B2kMUrUoYKv/rg5\nIYeGnTcKDrjhcLRHx5f2/b4UCSFiGDSVuQYh+sGjAoGBAJ1Gxur5c9qvoLl81M3s\nIlBv8fS+ATBwiOQvfGP1n0fqO1lM7cw6YhBwl2LTeauDai3PaECSBgcvnAkReJuj\nnCnf3ezZ692ufIKjQ54M4SY6pencVpzJRByqAhMf2mWn3q7KlR196EMvZOhr31Kw\nxG+DTXFWyNSSoTrvUMGQcUqK\n-----END PRIVATE KEY-----\n",
+  "client_email": "flipkaertuploader@flipkart-509014.iam.gserviceaccount.com",
+  "client_id": "114115239959750488875",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/flipkaertuploader%40flipkart-509014.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

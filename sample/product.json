@@ -1,0 +1,18 @@
+{
+  "sellerSkuId": "EAR-001",
+  "mrp": 1999,
+  "sellingPrice": 899,
+  "fulfilment": "SELLER",
+  "hsn": "7117",
+  "countryOfOrigin": "India",
+  "manufacturerDetails": "ABC Jewellery, Mohali, Punjab, India",
+  "packerDetails": "ABC Jewellery, Mohali, Punjab, India",
+  "taxCode": "GST_3",
+  "brand": "ABC",
+  "modelNumber": "EAR-001",
+  "modelName": "",
+  "plating": "",
+  "attributes": {
+    "Ideal For": "Women"
+  }
+}

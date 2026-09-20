@@ -1,0 +1,7 @@
+target/
+output/
+data/
+config/google/credentials.json
+*.log
+.idea/
+*.iml
