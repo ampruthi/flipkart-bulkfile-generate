@@ -17,11 +17,32 @@ public class ProductUploadRequest {
     private String brand = "NaariNest";
     private String modelNumber;
     private String modelName;
+
     private String plating;
     private BigDecimal length;
     private BigDecimal breadth;
     private BigDecimal height;
     private BigDecimal weight = BigDecimal.valueOf(0.30);
+    private BigDecimal diameter = BigDecimal.valueOf(25.0);
+    private String withEarChain = "No";
+
+    public BigDecimal getDiameter() {
+        return diameter;
+    }
+
+    public void setDiameter(BigDecimal diameter) {
+        this.diameter = diameter;
+    }
+
+    public String getWithEarChain() {
+        return withEarChain;
+    }
+
+    public void setWithEarChain(String withEarChain) {
+        this.withEarChain = withEarChain;
+    }
+
+
 
     public Integer getStock() {
         return stock;

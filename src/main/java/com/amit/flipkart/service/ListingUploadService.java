@@ -101,13 +101,19 @@ public class ListingUploadService {
         putIfPresent(data, "Silver Weight (g)", "NA");
         putIfPresent(data, "Stock", input.getStock());
         putIfPresent(data, "Procurement SLA (DAY)", 2);
+        putIfPresent(data, "Procurement type", "Instock");
+        putIfPresent(data, "Shipping provider", "Flipkart");
+        putIfPresent(data, "Diameter (mm)", input.getDiameter());
+        putIfPresent(data, "With Ear Chain",  input.getWithEarChain());
+        putIfPresent(data, "Procurement type", "EXPRESS");
 
 
-        data.put("Main Image URL", driveUrls.getFirst().url());
+
+        data.put("Main Image URL", driveUrls.getFirst().url().replace("dl=1", "raw=1").replace("www.dropbox.com", "dl.dropboxusercontent.com"));
         for (int i = 1; i < driveUrls.size() && i <= 4; i++) {
-            data.put("Other Image URL " + i, driveUrls.get(i).url());
+            data.put("Other Image URL " + i, driveUrls.get(i).url().replace("dl=1", "raw=1").replace("www.dropbox.com", "dl.dropboxusercontent.com"));
         }
-        data.put("Supplier Image", driveUrls.getFirst().url());
+        data.put("Supplier Image", driveUrls.getFirst().url().replace("dl=1", "raw=1").replace("www.dropbox.com", "dl.dropboxusercontent.com"));
 
         Listing listing = new Listing();
         listing.setSellerSkuId(input.getSellerSkuId());
