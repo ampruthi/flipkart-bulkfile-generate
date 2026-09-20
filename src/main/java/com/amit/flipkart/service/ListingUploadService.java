@@ -3,6 +3,7 @@ package com.amit.flipkart.service;
 import com.amit.flipkart.model.DropboxImageUploadResult;
 import com.amit.flipkart.model.Listing;
 import com.amit.flipkart.model.ListingStatus;
+import com.amit.flipkart.model.ListingCategory;
 import com.amit.flipkart.model.ProductUploadRequest;
 import com.amit.flipkart.repository.ListingRepository;
 import com.dropbox.core.DbxException;
@@ -117,6 +118,7 @@ public class ListingUploadService {
 
         Listing listing = new Listing();
         listing.setSellerSkuId(input.getSellerSkuId());
+        listing.setCategory(ListingCategory.EARRING);
         listing.setStatus(ListingStatus.EXCEL_PENDING);
         listing.setListingData(data);
         listing.setImageUrls(driveUrls.stream().map(DropboxImageUploadResult::url).toList());

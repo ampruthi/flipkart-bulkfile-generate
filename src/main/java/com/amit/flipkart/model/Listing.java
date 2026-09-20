@@ -22,6 +22,10 @@ public class Listing {
     @Column(nullable = false)
     private ListingStatus status = ListingStatus.EXCEL_PENDING;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    private ListingCategory category = ListingCategory.EARRING;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "listing_data", columnDefinition = "jsonb", nullable = false)
     private Map<String, Object> listingData = new LinkedHashMap<>();
@@ -44,6 +48,7 @@ public class Listing {
 
     @PrePersist
     void prePersist() {
+        if (category == null) category = ListingCategory.EARRING;
         createdAt = OffsetDateTime.now();
         updatedAt = createdAt;
     }
@@ -58,6 +63,8 @@ public class Listing {
     public void setSellerSkuId(String sellerSkuId) { this.sellerSkuId = sellerSkuId; }
     public ListingStatus getStatus() { return status; }
     public void setStatus(ListingStatus status) { this.status = status; }
+    public ListingCategory getCategory() { return category; }
+    public void setCategory(ListingCategory category) { this.category = category; }
     public Map<String, Object> getListingData() { return listingData; }
     public void setListingData(Map<String, Object> listingData) { this.listingData = listingData; }
     public List<String> getImageUrls() { return imageUrls; }

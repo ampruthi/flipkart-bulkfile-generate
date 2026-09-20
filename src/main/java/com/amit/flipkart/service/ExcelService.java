@@ -2,6 +2,7 @@ package com.amit.flipkart.service;
 
 import com.amit.flipkart.model.Listing;
 import com.amit.flipkart.model.ListingStatus;
+import com.amit.flipkart.model.ListingCategory;
 import com.amit.flipkart.repository.ListingRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -39,7 +40,7 @@ public class ExcelService {
             Files.createDirectories(outputDir);
 
             List<Listing> listings =
-                    repository.findAllByStatusOrderByCreatedAtAsc(ListingStatus.EXCEL_PENDING);
+                    repository.findPendingEarringsOrLegacy(ListingStatus.EXCEL_PENDING, ListingCategory.EARRING);
 
             if (listings.isEmpty()) {
                 throw new IllegalStateException("No EXCEL_PENDING listings found");

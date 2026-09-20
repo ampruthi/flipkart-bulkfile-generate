@@ -15,6 +15,7 @@ spring:
 app:
   excel:
     template: classpath:templates/C_earring_1eeefffca65b48c4_1809-1643FK_REQXQFJK8HQTF.xls
+    necklace-template: classpath:templates/C_necklace-chain_1eeefffca65b48c4_2009-1827FK_REQOL9KHOTXYE.xls
     output-dir: ./output
 
   openai:
