@@ -18,17 +18,35 @@ public class OpenAiProductService {
     private final RestClient client;
     private final ObjectMapper mapper;
     private final String model;
+    private final String reasoningEffort;
     private final MasterDataService masterData;
+    private static final List<String> AI_FIELDS = List.of(
+            "Type", "Ideal For", "Model Name", "Base Material", "Gemstone", "Diamond Clarity",
+            "Pearl Type", "Certification", "Collection", "Plating", "Color", "Occasion",
+            "Piercing Required", "Earring Back Type", "Finish", "Setting", "Silver Purity",
+            "Metal Purity", "Natural/Synthetic Diamond", "Natural/Synthetic Ruby", "Ruby Shape",
+            "Ruby Clarity", "Ruby Weight (carat)", "Natural/Synthetic Emerald", "Emerald Shape",
+            "Emerald Clarity", "Natural/Synthetic Sapphire", "Sapphire Shape", "Sapphire Clarity",
+            "Natural/Synthetic Amethyst", "Amethyst Shape", "Amethyst Clarity",
+            "Artificial Pearl Material", "Pearl Shape", "Pearl Grade",
+            "Natural/Synthetic Semi-precious Stone", "Semi-precious Stone Type",
+            "Semi-precious Stone Shape", "Items Included", "Closure Type", "Sub Type",
+            "Earring Shape", "With Ear Chain", "Earring Set Type", "Number of Pairs",
+            "Number of Gemstones", "Design", "Metal Color", "Other Dimensions", "Other Features",
+            "Description", "Search Keywords", "Key Features", "Ornamentation Type", "Net Quantity",
+            "Brand Color");
 
     public OpenAiProductService(
             ObjectMapper mapper,
             @Value("${app.openai.base-url:https://api.openai.com/v1}") String baseUrl,
             @Value("${app.openai.api-key:}") String apiKey,
-            @Value("${app.openai.model:gpt-5-mini}") String model,
+            @Value("${app.openai.model:gpt-5.4}") String model,
+            @Value("${app.openai.reasoning-effort:medium}") String reasoningEffort,
             MasterDataService masterData) {
 
         this.mapper = mapper;
         this.model = model;
+        this.reasoningEffort = reasoningEffort;
         this.masterData = masterData;
 
         this.client = RestClient.builder()
@@ -97,7 +115,9 @@ Semi-precious Stone Shape, Items Included, Closure Type, Sub Type, Earring Shape
 
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("model", model);
+            body.put("reasoning", Map.of("effort", reasoningEffort));
             body.put("input", List.of(message));
+            body.put("text", Map.of("format", responseFormat()));
 
             String raw = client.post()
                     .uri("/responses")
@@ -123,14 +143,51 @@ Semi-precious Stone Shape, Items Included, Closure Type, Sub Type, Earring Shape
         }
     }
 
-    private void validateAllowedValues(Map<String, Object> fields) {
-        fields.replaceAll((key, value) -> {
-            List<String> allowed = masterData.allowedValues(key);
-            if (allowed.isEmpty() || value == null) return value;
+    private Map<String, Object> responseFormat() {
+        Map<String, Object> properties = new LinkedHashMap<>();
+        for (String field : AI_FIELDS) {
+            properties.put(field, fieldSchema(field));
+        }
+        properties.put("aiTitle", Map.of("type", "string"));
 
-            String candidate = String.valueOf(value).trim();
-            return allowed.contains(candidate) ? candidate : "";
-        });
+        Map<String, Object> schema = new LinkedHashMap<>();
+        schema.put("type", "object");
+        schema.put("properties", properties);
+        schema.put("required", new ArrayList<>(properties.keySet()));
+        schema.put("additionalProperties", false);
+
+        return Map.of(
+                "type", "json_schema",
+                "name", "flipkart_earring_attributes",
+                "strict", true,
+                "schema", schema);
+    }
+
+    private Map<String, Object> fieldSchema(String field) {
+        List<String> allowed = masterData.allowedValues(field);
+        if (allowed.isEmpty()) {
+            return Map.of("type", "string");
+        }
+        return Map.of("type", "string", "enum", allowed);
+    }
+
+    private void validateAllowedValues(Map<String, Object> fields) {
+        List<String> invalidFields = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : fields.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            List<String> allowed = masterData.allowedValues(key);
+            if (allowed.isEmpty()) continue;
+
+            String candidate = value == null ? "" : String.valueOf(value).trim();
+            if (!allowed.contains(candidate)) {
+                invalidFields.add(key);
+            }
+        }
+        if (!invalidFields.isEmpty()) {
+            throw new IllegalStateException(
+                    "OpenAI returned values outside Flipkart allowed values for: " + invalidFields);
+        }
     }
 
     private String extractOutputText(JsonNode root) {
