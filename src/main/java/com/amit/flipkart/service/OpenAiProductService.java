@@ -19,40 +19,6 @@ public class OpenAiProductService {
     private final ObjectMapper mapper;
     private final String model;
     private final MasterDataService masterData;
-    private static final String earringAllowedValues = """
-            Type: Chandbali Earring, Clip-on Earring, Cuff Earring, Drops & Danglers, Ear Thread, Earring Set, Hoop Earring, Huggie Earring, Jhumki Earring, Magnetic Earring, Plug Earring, Rhinestone Studs, Stud Earring, Tassel Earring, Tunnel Earring
-            
-            Ideal For: Baby Boys, Baby Girls, Boys, Girls, Men, Women
-            
-            Base Material: Acrylic, Alloy, Aluminum, Bone, Brass, Bronze, Ceramic, Cobalt, Copper, Cotton Dori, Crystal, Enamel, Fabric, German Silver, Glass, Gold, Ivory, Jute, Lac, Leather, Metal, Mother of Pearl, Nickel, Paper, Plastic, Porcelain, Resin, Ribbon, Rubber, Shell, Silicone, Silk Dori, Silver, Stainless Steel, Steel, Stone, Terracotta, Tungsten, White Metal, Wood, Zinc
-            
-            Gemstone: Agate, Alexandrite, Amber, Amethyst, Andalusite, Aquamarine, Beads, Beryl, Black Diamond, Blue Sapphire, Carnelian, Cat's Eye, Chalcedony, Citrine, Coral, Crystal, Cubic Zirconia, Danburite, Diamond, Diopside, Emerald, Garnet, Iolite, Jade, Kyanite, Labradorite, Lapis Lazuli, Malachite, Moissanite, Moonstone, Mother of Pearl, NA, Onyx, Opal, Orange Sapphire, Pearl, Peridot, Quartz, Ruby, Sapphire, Spinel, Swarovski Crystal, Swarovski Zirconia, Tanzanite, Tiger Eye, Titanium Drusy, Topaz, Tourmaline, Tsavorite, Turquoise, White Zircon, Zircon
-            
-            Pearl Type: Cultured, Freshwater, NA, Plastic, South Sea, Tahitian
-            
-            Certification: BIS Hallmark, Brand Certification, EGL, GIA, GSL, HKD, IDI, IGI, IGL, NA, SGL, Swarovski Authenticity
-            
-            Collection: Contemporary, Ethnic
-            
-            Plating: 800 Silver, 830 Silver, 900 Silver, 958 Silver, 999 Silver, Black Silver, Brass, Copper, Enamel, Gold-plated, NA, Palladium, Platinum, Rhodium, Silver, Sterling Silver, Titanium
-            
-            Color: Aqua, Beige, Black, Blue, Bronze, Brown, Copper, Gold, Green, Grey, Maroon, Multicolor, Orange, Pink, Platinum, Purple, Red, Rose Gold, Sea Green, Silver, Turquoise, White, Yellow
-            
-            Diamond Clarity: FL, I1, I2, I3, IF, NA, SI, SI-I, SI1, SI2, VS, VS-SI, VS1, VS2, VVS, VVS-VS, VVS1, VVS2
-            
-            Occasion: Everyday, Love, Party, Religious, Wedding & Engagement, Workwear
-            
-            Closure Type: Clip-on, Hooks, Hoopwire, Magnetic, Push Plugs, Screw
-            
-            Sub Type: Bar Danglers, Basic Stud, Bead Tassels, Behind the Ear, Chain Cuffs, Chain Link Earring, Chandbali Jhumkis, Chandelier Earring, Classic Jumki, Closed Hoop, Cuffs with Danglers, Dangle Earring, Dangler Hoop, Dangler Tunnels, Dreamcatchers, Drop Earring, Drop Tassels, Ear Spike, Fan Tassels, Fringe Danglers, Half Moon Chandbalis, Hoop Chandbali, Hoop Jhumkis, Hoop Tassels, Hoop Tunnels, Huggie Cuff, Huggie Studs, Jacket Earring, Jhalar Jhumki, Layered Chandbalis, Layered Hoop, Layered Jhumki, Mesh Danglers, Multi Tassels, NA, Needle Thread, Open Hoop, Over the Ear, Pom Pom Tassels, Regular Chandbalis, Round Tassels, Stick-on Earring, Stud Tunnels, Tiered Tassels
-            
-            Earring Shape: Abstract, Animals, Ball, Bell, Birds, Bows, Butterfly, Elephant, Feather, Floral, Geometric, God Symbols, Heart, Leaf, Moon, Oval, Owl, Paisley, Parrot, Peacock, Round, Square, Star, Sun, Teardrop
-            
-            Earring Set Type: Chandbali Earring, Cuff Earring, Drops & Danglers, Hoop Earring, Jhumki Earring, Stud Earring, Tunnel Earring
-            
-            Design: Heavy, Minimal, Statement
-            
-            Ornamentation Type: Beads, Coins, Cutwork/Filigree, Dried Flowers, Enamel Decoartions, Feather, Gemstones, Ghungroo, Glitter, Hand-painted, Kundan, Mirror Work, None, Pearl, Pom Poms, Stones, Tassel""";
 
     public OpenAiProductService(
             ObjectMapper mapper,
@@ -83,24 +49,35 @@ public class OpenAiProductService {
             userText.put("allowedValues", masterData.allowedValues());
 
             String instruction = """
-                    Analyze the supplied product image and the supplied product information.
-                    This is a Flipkart earring listing targeted at Indian women and adults.
-                    
-                    CRITICAL INSTRUCTIONS FOR ACCURACY & CONTEXT:
-                    1. IMITATION JEWELRY RULE: Always assume the jewelry is artificial/imitation. Reflect this in "Base Material" (e.g., Alloy, Brass, Copper) and "Gemstone" fields (e.g., Cubic Zirconia, CZ, Artificial Stones, Beads) unless the provided text explicitly proves otherwise. Do not use real precious metal purities or natural diamond certifications.
-                    2. PLATING & METAL COLOR: Carefully inspect the surface. Identify if it is Gold Plated, Silver Plated, Rose Gold Plated, Black/Oxidized (very common for Indian jhumkas/chandbalis), or Two-Tone.\s
-                    3. INDIAN MARKET RELEVANCE: When analyzing design, motifs, occasion, and "aiTitle", explicitly consider Indian festive, wedding, ethnic, and daily wear trends. Use relevant vocabulary where appropriate (e.g., Jhumka, Chandbali, Studs, Drops, Hoop, Meenakari, Kundan, Temple Jewelry, Oxidized, Festive, Wedding).
-                    4. TITLE GENERATION ("aiTitle"): Create a concise, high-converting, Flipkart-optimized marketplace title (approx. 50-70 characters). Follow this format: [Brand/Generic] [Plating/Color] [Design/Style Style] [Type of Earring] for Women. (Example: "Gold Plated Pearl Drop Jhumka Earrings for Women"). Do not invent a brand name; use "Artificial" or a generic identifier if the brand is blank.
-                    
-                    Return ONLY a valid, minified JSON object. Fill only product/catalog attributes that can reasonably be inferred from the image or supplied information. Never invent factual commercial values such as price, HSN, brand, SKU, country of origin, manufacturer, packer, tax code, or certification.
-                    
-                    If a field cannot be determined, return an NA string ("NA"). Where an allowed-values list is supplied, choose exactly one value from that list. Do not invent a value outside the list.
-                    
-                    Include these fields strictly, and consider value from allowedValues (provided based on field name, else keep empty. If nothing match with prediction then Seelct NA / Other from list:
-                    Type, Ideal For, Model Name, Base Material, Gemstone, Diamond Clarity, Pearl Type, Certification, Collection, Plating, Color, Occasion, Piercing Required, Earring Back Type, Finish, Setting, Silver Purity, Metal Purity, Natural/Synthetic Diamond, Natural/Synthetic Ruby, Ruby Shape, Ruby Clarity, Ruby Weight (carat), Natural/Synthetic Emerald, Emerald Shape, Emerald Clarity, Natural/Synthetic Sapphire, Sapphire Shape, Sapphire Clarity, Natural/Synthetic Amethyst, Amethyst Shape, Amethyst Clarity, Artificial Pearl Material, Pearl Shape, Pearl Grade, Pearl Diameter (mm), Natural/Synthetic Semi-precious Stone, Semi-precious Stone Type, Semi-precious Stone Shape, Items Included, Closure Type, Sub Type, Earring Shape, With Ear Chain, Earring Set Type, Number of Pairs, Number of Gemstones, Design, Metal Color, Metal Weight, Width (mm), Height (mm), Diameter (mm), Weight (g), Other Dimensions, Other Features, Description, Search Keywords, Key Features, Ornamentation Type, Net Quantity, Brand Color.
-                    
-                    Also generate the concise marketplace title in "aiTitle".
-                    
+                    Analyze the supplied product image and product information to generate a Flipkart earring listing for Indian women.
+=== GROUND RULES ===
+1. IMITATION JEWELRY: Always treat jewelry as artificial/imitation unless explicitly stated otherwise.
+   - Base Material → Alloy, Brass, or Copper (never precious metals)
+   - Gemstone → Cubic Zirconia, CZ, Artificial Stones, or Beads
+2. PLATING: Inspect the surface carefully. Identify: Gold Plated, Silver Plated, Rose Gold Plated, Oxidized/Black, Two-Tone, or Antique.
+3. INDIAN MARKET: Apply Indian market vocabulary — Jhumka, Chandbali, Studs, Drops, Hoop, Meenakari, Kundan, Temple, Oxidized, Festive, Bridal, Ethnic — wherever contextually accurate.
+4. TITLE ("aiTitle"): Generate a Flipkart-optimized title (50–70 characters).
+   Format: [Plating/Color] [Design/Motif] [Earring Type] for Women
+   Example: "Gold Plated Kundan Jhumka Earrings for Women"
+   Do NOT invent a brand name.
+
+=== OUTPUT RULES ===
+- Return ONLY a valid, minified JSON object — no explanation, no markdown.
+- Never invent commercial values: price, HSN, SKU, brand, manufacturer, country of origin, certifications, or tax codes.
+- For fields with an allowedValues list → pick exactly one value from the list. Never invent a value outside it.
+- For fields WITHOUT an allowedValues list:
+  - Numeric/decimal/measurement fields (weight, dimensions in mm/cm/g) → use "" (empty string)
+  - Non-determinable or irrelevant text fields → use "NA"
+- For gemstone-specific fields (diamond, ruby, emerald, sapphire, amethyst, pearl properties) that clearly don't apply to this product → use "NA"
+
+=== FIELDS TO POPULATE ===
+Type, Ideal For, Model Name, Base Material, Gemstone, Diamond Clarity, Pearl Type, Certification, Collection, Plating, Color, Occasion, Piercing Required, 
+Earring Back Type, Finish, Setting, Silver Purity, Metal Purity, Natural/Synthetic Diamond, Natural/Synthetic Ruby, Ruby Shape, Ruby Clarity, Ruby Weight (carat), 
+Natural/Synthetic Emerald, Emerald Shape, Emerald Clarity, Natural/Synthetic Sapphire, Sapphire Shape, Sapphire Clarity, Natural/Synthetic Amethyst, Amethyst Shape, 
+Amethyst Clarity, Artificial Pearl Material, Pearl Shape, Pearl Grade, Natural/Synthetic Semi-precious Stone, Semi-precious Stone Type, 
+Semi-precious Stone Shape, Items Included, Closure Type, Sub Type, Earring Shape, With Ear Chain, Earring Set Type, Number of Pairs, Number of Gemstones, Design,
+ Metal Color, Other Dimensions, Other Features, Description, Search Keywords, Key Features, 
+ Ornamentation Type, Net Quantity, Brand Color, aiTitle                  
                 """;
 
 

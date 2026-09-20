@@ -4,10 +4,11 @@ import com.amit.flipkart.model.Listing;
 import com.amit.flipkart.model.ListingStatus;
 import com.amit.flipkart.repository.ListingRepository;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.file.*;
@@ -31,7 +32,9 @@ public class ExcelService {
         this.outputDir = Path.of(outputDir);
     }
 
+    @Transactional
     public Path generatePending() {
+        Path temporaryOutput = null;
         try {
             Files.createDirectories(outputDir);
 
@@ -47,9 +50,10 @@ public class ExcelService {
                     ".xls";
 
             Path output = outputDir.resolve(filename);
+            temporaryOutput = Files.createTempFile(outputDir, filename + ".", ".part");
 
             try (InputStream in = template.getInputStream();
-                 Workbook workbook = WorkbookFactory.create(in)) {
+                 HSSFWorkbook workbook = new HSSFWorkbook(in)) {
 
                 Sheet sheet = workbook.getSheet("earring");
                 if (sheet == null) {
@@ -71,24 +75,60 @@ public class ExcelService {
                     for (Map.Entry<String, Object> entry : data.entrySet()) {
                         Integer col = columns.get(entry.getKey());
                         if (col != null) {
-                            setCell(row.createCell(col), entry.getValue());
+                            Cell cell = row.getCell(col);
+                            if (cell == null) {
+                                cell = row.createCell(col);
+                            }
+                            setCell(cell, entry.getValue());
                         }
                     }
-
-                    // Keep the generated row as a pending bulk-upload record.
-                    listing.setStatus(ListingStatus.EXCEL_GENERATED);
-                    listing.setExcelFile(output.toString());
-                    repository.save(listing);
                 }
 
-                try (OutputStream out = Files.newOutputStream(output)) {
+                try (OutputStream out = Files.newOutputStream(temporaryOutput)) {
                     workbook.write(out);
                 }
             }
 
+            validateGeneratedWorkbook(temporaryOutput);
+            publish(temporaryOutput, output);
+            temporaryOutput = null;
+
+            // Do not mark a listing generated until its validated workbook is available.
+            for (Listing listing : listings) {
+                listing.setStatus(ListingStatus.EXCEL_GENERATED);
+                listing.setExcelFile(output.toString());
+                repository.save(listing);
+            }
+
             return output;
         } catch (Exception e) {
+            if (temporaryOutput != null) {
+                try {
+                    Files.deleteIfExists(temporaryOutput);
+                } catch (IOException ignored) {
+                    // Preserve the original export failure; the temporary file is harmless.
+                }
+            }
             throw new IllegalStateException("Excel generation failed: " + e.getMessage(), e);
+        }
+    }
+
+    private void validateGeneratedWorkbook(Path output) throws IOException {
+        try (InputStream in = Files.newInputStream(output);
+             HSSFWorkbook workbook = new HSSFWorkbook(in)) {
+            Sheet sheet = workbook.getSheet("earring");
+            if (sheet == null || headerMap(sheet).isEmpty()) {
+                throw new IllegalStateException("Generated workbook is missing the earring template headers");
+            }
+        }
+    }
+
+    private void publish(Path temporaryOutput, Path output) throws IOException {
+        try {
+            Files.move(temporaryOutput, output,
+                    StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(temporaryOutput, output, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
