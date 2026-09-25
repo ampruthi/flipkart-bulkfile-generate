@@ -1,8 +1,10 @@
 package com.amit.flipkart.service;
 
+import com.amit.flipkart.NaariNestConstants;
 import com.amit.flipkart.model.*;
 import com.amit.flipkart.repository.ListingRepository;
 import com.dropbox.core.DbxException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,10 +44,10 @@ public class NecklaceListingUploadService {
         put(data, "Tax Code", input.getTaxCode());
         put(data, "Brand", input.getBrand());
         put(data, "Model Number", input.getModelNumber());
-        put(data, "Length (CM)", input.getLength());
-        put(data, "Breadth (CM)", input.getBreadth());
-        put(data, "Height (CM)", input.getHeight());
-        put(data, "Weight (KG)", input.getWeight());
+        put(data, "Length (CM)", NaariNestConstants.packageLength);
+        put(data, "Breadth (CM)", NaariNestConstants.packageBreadth);
+        put(data, "Height (CM)", NaariNestConstants.packageHeigh);
+        put(data, "Weight (KG)", NaariNestConstants.packageWeight);
         put(data, "Stock", input.getStock());
         if (input.getAttributes() != null) data.putAll(input.getAttributes());
         data.putAll(ai.fields());
@@ -84,7 +86,7 @@ public class NecklaceListingUploadService {
         listing.setStatus(ListingStatus.EXCEL_PENDING);
         listing.setListingData(data);
         listing.setImageUrls(uploaded.stream().map(DropboxImageUploadResult::url).toList());
-        listing.setAiResponse(ai.rawResponse());
+        listing.setAiResponse(new ObjectMapper().writeValueAsString(ai.fields()));
         return repository.save(listing);
     }
 

@@ -21,8 +21,8 @@ public class ExcelController {
         this.service = service;
     }
 
-    @PostMapping("/generate")
-    public Map<String, String> generate() {
+    @PostMapping("/earring/generate")
+    public Map<String, String> generateEarringFile() {
         Path path = service.generatePending();
         return Map.of(
                 "status", "EXCEL_GENERATED",
@@ -30,13 +30,29 @@ public class ExcelController {
         );
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<Resource> download(@RequestParam String file) {
-        FileSystemResource resource = new FileSystemResource(file);
+    @GetMapping("/earring/download")
+    public ResponseEntity<Resource> downloadEarringFile(@RequestParam String file) {
+        Path path = service.generatePending();
+        FileSystemResource resource = new FileSystemResource(path);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + resource.getFilename() + "\"")
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(resource);
+    }
+
+    @PostMapping("/necklace/generate")
+    public Map<String, String> generateNecklaceFile() {
+        Path path = service.generatePending();
+        return Map.of("status", "EXCEL_GENERATED", "file", path.toAbsolutePath().toString());
+    }
+
+    @GetMapping("/necklace/download")
+    public ResponseEntity<Resource> downloadNecklaceFile() {
+        Path path = service.generatePending();
+        FileSystemResource resource = new FileSystemResource(path);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + resource.getFilename() + "\"")
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
     }
 }

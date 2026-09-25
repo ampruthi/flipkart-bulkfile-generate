@@ -1,11 +1,13 @@
 package com.amit.flipkart.service;
 
+import com.amit.flipkart.exception.ResourceNotFoundException;
 import com.amit.flipkart.model.Listing;
 import com.amit.flipkart.model.ListingStatus;
 import com.amit.flipkart.model.ListingCategory;
 import com.amit.flipkart.repository.ListingRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -43,7 +45,9 @@ public class ExcelService {
                     repository.findPendingEarringsOrLegacy(ListingStatus.EXCEL_PENDING, ListingCategory.EARRING);
 
             if (listings.isEmpty()) {
-                throw new IllegalStateException("No EXCEL_PENDING listings found");
+                throw new ResourceNotFoundException(
+                        "No pending earring listings found"
+                );
             }
 
             String filename = "flipkart-earring-upload-" +
@@ -58,7 +62,9 @@ public class ExcelService {
 
                 Sheet sheet = workbook.getSheet("earring");
                 if (sheet == null) {
-                    throw new IllegalStateException("earring sheet not found");
+                    throw new ResourceNotFoundException(
+                            "Sheet Not Found!"
+                    );
                 }
 
                 Map<String, Integer> columns = headerMap(sheet);

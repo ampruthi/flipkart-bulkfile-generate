@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Flipkart Product Upload</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #ddd;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            padding: 9px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .images {
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #response {
+            margin-top: 25px;
+            white-space: pre-wrap;
+            background: #f0f0f0;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<header class="header">
+
+    <h1>Add New Product</h1>
+
+    <div class="header-actions">
+
+        <button
+                class="btn btn-primary"
+                onclick="window.location.href='/products/listing'">
+            Home
+        </button>
+
+    </div>
+
+</header>
+<div class="container">
+
+    <h1>Flipkart Product Upload</h1>
+
+    <form id="productForm">
+
+        <div class="row">
+            <label for="category">Category</label>
+            <select id="category">
+                <option value="">Select Category</option>
+                <option value="EARRING">EARRING</option>
+                <option value="NECKLACE">NECKLACE</option>
+            </select>
+        </div>
+        <div class="row">
+            <label>Seller SKU ID</label>
+            <input id="sellerSkuId"
+                   value="NNR-TYPE-NUMBER"
+                   required>
+        </div>
+
+        <div class="row">
+            <label>MRP</label>
+            <input id="mrp"
+                   type="number"
+                   value="0"
+                   required>
+        </div>
+
+        <div class="row">
+            <label>Selling Price</label>
+            <input id="sellingPrice"
+                   type="number"
+                   value="0"
+                   required>
+        </div>
+
+        <div class="row">
+            <label>Model Number</label>
+            <input id="modelNumber"
+                   value="TYPE-NUMBER" required>
+        </div>
+
+        <div class="row">
+            <label>Model Name</label>
+            <input id="modelName"
+                   value="Type of article" required>
+        </div>
+
+        <!--   <div class="row">
+               <label>Height (CM)</label>
+               <input id="height"
+                      type="number"
+                      step="0.01"
+                      value="0" required>
+           </div>
+
+           <div class="row">
+               <label>Breadth (CM)</label>
+               <input id="breadth"
+                      type="number"
+                      step="0.01"
+                      value="0" required>
+           </div>
+
+           <div class="row">
+               <label>Length (CM)</label>
+               <input id="length"
+                      type="number"
+                      step="0.01"
+                      value="0" required>
+           </div>
+
+           <div class="row">
+               <label>Weight (KG)</label>
+               <input id="weight"
+                      type="number"
+                      step="0.001"
+                      value="0" required>
+           </div>-->
+
+        <div class="row">
+            <label>Stock</label>
+            <input id="stock"
+                   type="number"
+                   value="5" required>
+        </div>
+
+        <div class="row">
+            <label>Diameter (MM)</label>
+            <input id="diameter"
+                   type="number"
+                   step="0.01"
+                   value="21" required>
+        </div>
+
+        <div class="images">
+            <label>Product Images</label>
+            <br><br>
+
+            <input type="file"
+                   id="images"
+                   name="images"
+                   accept="image/*"
+                   multiple
+                   required>
+        </div>
+
+        <button type="submit">
+            Upload Product
+        </button>
+
+    </form>
+
+    <div id="response"></div>
+
+</div>
+
+<script>
+    function validateRequiredFields() {
+
+        const requiredFields = document.querySelectorAll(
+            "input[required], select[required], textarea[required]"
+        );
+
+        for (const field of requiredFields) {
+
+            const value = field.value.trim();
+            const defaultValue = field.dataset.default;
+
+            if (!value) {
+                alert(`${getFieldLabel(field)} is required.`);
+                field.focus();
+                return false;
+            }
+
+            if (defaultValue !== undefined && value === defaultValue) {
+                alert(`${getFieldLabel(field)} must be changed.`);
+                field.focus();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function getFieldLabel(field) {
+
+        const label = document.querySelector(
+            `label[for="${field.id}"]`
+        );
+
+        // Your current HTML doesn't use "for",
+        // so find the label in the same row.
+        if (!label) {
+            const row = field.closest(".row");
+            return row?.querySelector("label")?.textContent.trim()
+                || field.id;
+        }
+
+        return label.textContent.trim();
+    }
+
+    document
+        .getElementById("productForm")
+        .addEventListener("submit", async function (event) {
+
+            event.preventDefault();
+
+            const category = document.getElementById("category").value;
+            console.log('Category: ', category);
+            if (!category) {
+                alert("Please select a category");
+                return;
+            }
+
+            const product = {
+                sellerSkuId:
+                document.getElementById("sellerSkuId").value,
+
+                mrp:
+                    Number(document.getElementById("mrp").value),
+
+                sellingPrice:
+                    Number(document.getElementById("sellingPrice").value),
+
+                modelNumber:
+                document.getElementById("modelNumber").value,
+
+                modelName:
+                document.getElementById("modelName").value,
+
+                stock:
+                    Number(document.getElementById("stock").value),
+
+                diameter:
+                    Number(document.getElementById("diameter").value)
+            };
+
+            const formData = new FormData();
+
+            formData.append(
+                "product",
+                new Blob(
+                    [JSON.stringify(product)],
+                    {
+                        type: "application/json"
+                    }
+                )
+            );
+
+            const files =
+                document.getElementById("images").files;
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append("images", files[i]);
+            }
+
+            const responseElement =
+                document.getElementById("response");
+
+            responseElement.textContent =
+                "Uploading...";
+
+            try {
+                const url = category === 'EARRING'
+                    ? '/api/v1/products/upload'
+                    : '/api/v1/necklaces/upload';
+
+                console.log('API URL: ', url);
+
+                const response = await fetch(
+                    url,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+                const text =
+                    await response.text();
+
+                responseElement.textContent =
+                    "HTTP " + response.status +
+                    "\n\n" +
+                    text;
+
+            } catch (error) {
+
+                responseElement.textContent =
+                    "Upload failed:\n" +
+                    error;
+
+            }
+
+        });
+
+</script>
+
+</body>
+</html>

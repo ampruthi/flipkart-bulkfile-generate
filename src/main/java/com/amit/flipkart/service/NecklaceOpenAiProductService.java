@@ -56,6 +56,14 @@ public class NecklaceOpenAiProductService {
                     Never invent price, HSN, brand, SKU, origin, manufacturer, packer, importer, tax code, or image URLs.
                     Use Indian jewellery terminology accurately: necklace, chain, choker, layered, kundan, oxidised, festive, bridal, ethnic.
                     Return the required structured attributes only.
+                    === FIELDS TO POPULATE ===
+Type, Ideal For, Model Name, Base Material, Gemstone, Diamond Clarity, Pearl Type, Certification, Collection, Plating, Color, Occasion, Piercing Required, 
+Earring Back Type, Finish, Setting, Silver Purity, Metal Purity, Natural/Synthetic Diamond, Natural/Synthetic Ruby, Ruby Shape, Ruby Clarity, Ruby Weight (carat), 
+Natural/Synthetic Emerald, Emerald Shape, Emerald Clarity, Natural/Synthetic Sapphire, Sapphire Shape, Sapphire Clarity, Natural/Synthetic Amethyst, Amethyst Shape, 
+Amethyst Clarity, Artificial Pearl Material, Pearl Shape, Pearl Grade, Natural/Synthetic Semi-precious Stone, Semi-precious Stone Type, 
+Semi-precious Stone Shape, Items Included, Closure Type, Sub Type, Earring Shape, With Ear Chain, Earring Set Type, Number of Pairs, Number of Gemstones, Design,
+ Metal Color, Other Dimensions, Other Features, Description, Search Keywords, Key Features, 
+ Ornamentation Type, Net Quantity, Brand Color, aiTitle
                     """;
             Map<String, Object> message = Map.of("role", "user", "content", List.of(
                     Map.of("type", "input_text", "text", instruction + "\nInput:\n" + mapper.writeValueAsString(supplied)),

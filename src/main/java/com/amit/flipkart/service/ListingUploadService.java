@@ -1,5 +1,6 @@
 package com.amit.flipkart.service;
 
+import com.amit.flipkart.NaariNestConstants;
 import com.amit.flipkart.model.DropboxImageUploadResult;
 import com.amit.flipkart.model.Listing;
 import com.amit.flipkart.model.ListingStatus;
@@ -45,11 +46,12 @@ public class ListingUploadService {
             throw new IllegalArgumentException(
                     "Seller SKU already exists: " + input.getSellerSkuId());
         }
-
+        log.info("Analyse with AI .............");
         // Image #1 only is sent to OpenAI, as requested.
         OpenAiProductService.AiResult ai = openAi.analyze(input, images[0]);
-        log.info("AI Response: {}", ai);
+        log.info("AI Predicted Values: Sku: {}, Data: {}", input.getSellerSkuId(), new ObjectMapper().writeValueAsString(ai.fields()));
 
+        log.info("Upload images.............");
         List<DropboxImageUploadResult> driveUrls =
                 dropboxService.uploadProductImages(
                         input.getSellerSkuId(),
@@ -70,10 +72,10 @@ public class ListingUploadService {
         data.put("Model Number", input.getModelNumber());
         data.put("Model Name", input.getModelName());
         data.put("Plating", input.getPlating());
-        data.put("Length (CM)", input.getLength());
-        data.put("Breadth (CM)", input.getBreadth());
-        data.put("Height (CM)", input.getHeight());
-        data.put("Weight (KG)", input.getWeight());
+        data.put("Length (CM)", NaariNestConstants.packageLength);
+        data.put("Breadth (CM)", NaariNestConstants.packageBreadth);
+        data.put("Height (CM)", NaariNestConstants.packageHeigh);
+        data.put("Weight (KG)", NaariNestConstants.packageWeight);
 
         if (input.getAttributes() != null) {
             data.putAll(input.getAttributes());
@@ -95,19 +97,20 @@ public class ListingUploadService {
         putIfPresent(data, "Model Number", input.getModelNumber());
         putIfPresent(data, "Model Name", input.getModelName());
         putIfPresent(data, "Plating", input.getPlating());
-        putIfPresent(data, "Length (CM)", input.getLength());
-        putIfPresent(data, "Breadth (CM)", input.getBreadth());
-        putIfPresent(data, "Height (CM)", input.getHeight());
-        putIfPresent(data, "Weight (KG)", input.getWeight());
+        putIfPresent(data, "Length (CM)", NaariNestConstants.packageLength);
+        putIfPresent(data, "Breadth (CM)", NaariNestConstants.packageBreadth);
+        putIfPresent(data, "Height (CM)", NaariNestConstants.packageWeight);
+        putIfPresent(data, "Weight (KG)", NaariNestConstants.packageWeight);
         putIfPresent(data, "Silver Weight (g)", "NA");
         putIfPresent(data, "Stock", input.getStock());
         putIfPresent(data, "Procurement SLA (DAY)", 2);
         putIfPresent(data, "Procurement type", "Instock");
         putIfPresent(data, "Shipping provider", "Flipkart");
         putIfPresent(data, "Diameter (mm)", input.getDiameter());
-        putIfPresent(data, "With Ear Chain",  input.getWithEarChain());
+        putIfPresent(data, "With Ear Chain", input.getWithEarChain());
         putIfPresent(data, "Procurement type", "EXPRESS");
-
+        putIfPresent(data, "Ruby Weight (carat)", 0.0);
+        putIfPresent(data, "Number of Gemstones", 0);
 
 
         data.put("Main Image URL", driveUrls.getFirst().url().replace("dl=1", "raw=1").replace("www.dropbox.com", "dl.dropboxusercontent.com"));
@@ -122,8 +125,9 @@ public class ListingUploadService {
         listing.setStatus(ListingStatus.EXCEL_PENDING);
         listing.setListingData(data);
         listing.setImageUrls(driveUrls.stream().map(DropboxImageUploadResult::url).toList());
-        listing.setAiResponse(ai.rawResponse());
+        listing.setAiResponse(new ObjectMapper().writeValueAsString(ai.fields()));
 
+        log.info("Processed.............");
         return repository.save(listing);
     }
 

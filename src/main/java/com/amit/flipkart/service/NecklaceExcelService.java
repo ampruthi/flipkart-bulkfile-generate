@@ -1,5 +1,6 @@
 package com.amit.flipkart.service;
 
+import com.amit.flipkart.exception.ResourceNotFoundException;
 import com.amit.flipkart.model.*;
 import com.amit.flipkart.repository.ListingRepository;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -38,14 +39,22 @@ public class NecklaceExcelService {
             Files.createDirectories(outputDir);
             List<Listing> listings = repository.findAllByStatusAndCategoryOrderByCreatedAtAsc(
                     ListingStatus.EXCEL_PENDING, ListingCategory.NECKLACE_CHAIN);
-            if (listings.isEmpty()) throw new IllegalStateException("No pending necklace listings found");
+            if (listings.isEmpty()) {
+                throw new ResourceNotFoundException(
+                        "No pending neckalce listings found"
+                );
+            }
             String filename = "flipkart-necklace-chain-upload-" +
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + ".xls";
             Path output = outputDir.resolve(filename);
             temporary = Files.createTempFile(outputDir, filename + ".", ".part");
             try (InputStream in = template.getInputStream(); HSSFWorkbook workbook = new HSSFWorkbook(in)) {
                 Sheet sheet = workbook.getSheet(SHEET);
-                if (sheet == null) throw new IllegalStateException("necklace_chain sheet not found");
+                if (sheet == null) {
+                    throw new ResourceNotFoundException(
+                            "File Not Found!"
+                    );
+                }
                 Map<String, Integer> columns = headerMap(sheet);
                 int rowIndex = FIRST_DATA_ROW;
                 for (Listing listing : listings) {

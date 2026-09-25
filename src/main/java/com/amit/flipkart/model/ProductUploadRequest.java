@@ -19,10 +19,6 @@ public class ProductUploadRequest {
     private String modelName;
 
     private String plating;
-    private BigDecimal length;
-    private BigDecimal breadth;
-    private BigDecimal height;
-    private BigDecimal weight = BigDecimal.valueOf(0.30);
     private BigDecimal diameter = BigDecimal.valueOf(25.0);
     private String withEarChain = "No";
 
@@ -172,37 +168,4 @@ public class ProductUploadRequest {
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
-
-    public BigDecimal getLength() {
-        return length;
-    }
-
-    public void setLength(BigDecimal length) {
-        this.length = length;
-    }
-
-    public BigDecimal getBreadth() {
-        return breadth;
-    }
-
-    public void setBreadth(BigDecimal breadth) {
-        this.breadth = breadth;
-    }
-
-    public BigDecimal getHeight() {
-        return height;
-    }
-
-    public void setHeight(BigDecimal height) {
-        this.height = height;
-    }
-
-    public BigDecimal getWeight() {
-        return weight;
-    }
-
-    public void setWeight(BigDecimal weight) {
-        this.weight = weight;
-    }
-
 }
