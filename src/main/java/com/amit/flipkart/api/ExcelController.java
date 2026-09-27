@@ -31,7 +31,7 @@ public class ExcelController {
     }
 
     @GetMapping("/earring/download")
-    public ResponseEntity<Resource> downloadEarringFile(@RequestParam String file) {
+    public ResponseEntity<Resource> downloadEarringFile() {
         Path path = service.generatePending();
         FileSystemResource resource = new FileSystemResource(path);
         return ResponseEntity.ok()

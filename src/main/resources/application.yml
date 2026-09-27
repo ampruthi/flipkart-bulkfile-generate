@@ -25,8 +25,8 @@ app:
     reasoning-effort: ${OPENAI_REASONING_EFFORT:medium}
 
 dropbox:
-  app-key: ${DROPBOX_APP_KEY:dq7e541o7judajy}
-  app-secret: ${DROPBOX_APP_SECRET:d2hc1u8rksscw6b}
+  app-key: ${DROPBOX_APP_KEY:}
+  app-secret: ${DROPBOX_APP_SECRET:}
   refresh-token: ${DROPBOX_REFRESH_TOKEN}
   folder: ${DROPBOX_FOLDER:/Flipkart-naarinest-media}
 
